@@ -8,6 +8,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool _seepass = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,22 +103,30 @@ class _LoginState extends State<Login> {
                       height: 30,
                     ),
                     TextFormField(
-                      obscureText: true,
+                      obscureText: _seepass,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: IconButton(
-                              onPressed: () {}, icon: Icon(Icons.visibility)),
-                        ),
-                        hintText: ".......",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: const BorderSide(
-                                width: 1,
-                                color: Colors.grey,
-                                style: BorderStyle.none)),
-                      ),
+                          suffixIcon: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _seepass = !_seepass;
+                                });
+                              },
+                              icon: _seepass
+                                  ? Icon(Icons.visibility_off)
+                                  : Icon(Icons.visibility),
+                            ),
+                          ),
+                          hintText: ".......",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Colors.grey,
+                                  style: BorderStyle.none)),
+                          contentPadding: const EdgeInsets.only(left: 25)),
                     ),
                     const SizedBox(
                       height: 80,
