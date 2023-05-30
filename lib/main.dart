@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'Pages/AdminHome.dart';
+import 'Pages/Checking.dart';
+import 'Pages/FormAdd.dart';
 import 'Pages/Login.dart';
 import 'Pages/Register.dart';
+import 'Pages/UserInfo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AdminHome(),
+      home: const FormAdd(),
     );
   }
 }
