@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'Pages/AdminHome.dart';
 import 'Pages/Checking.dart';
@@ -6,9 +7,23 @@ import 'Pages/FormAdd.dart';
 import 'Pages/Login.dart';
 import 'Pages/Register.dart';
 import 'Pages/UserInfo.dart';
+import 'Service/AuthProvider.dart';
+import 'Service/UserProvider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (BuildContext context) => AuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => UserProvider(),
+        )
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,7 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FormAdd(),
+      home: const Register(),
     );
   }
 }
