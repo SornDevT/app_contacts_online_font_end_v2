@@ -5,6 +5,7 @@ import 'Pages/AdminHome.dart';
 import 'Pages/Checking.dart';
 import 'Pages/FormAdd.dart';
 import 'Pages/Login.dart';
+import 'Pages/MainApp.dart';
 import 'Pages/Register.dart';
 import 'Pages/UserInfo.dart';
 import 'Service/AuthProvider.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Register(),
+      home: const MainApp(),
     );
   }
 }

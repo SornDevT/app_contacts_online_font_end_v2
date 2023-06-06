@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../Service/UserProvider.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -356,15 +358,38 @@ class _RegisterState extends State<Register> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   if (_password.text ==
                                       _confirm_password.text) {
                                     setState(() {
                                       _check_pass = false;
                                     });
-                                    print('form pass ok');
-                                    print(_name.text);
+
+                                    bool result =
+                                        await Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .RegisterUser(
+                                                _name.text,
+                                                _last_name.text,
+                                                Gender,
+                                                '',
+                                                _tel.text,
+                                                _password.text,
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                '',
+                                                _email.text,
+                                                '',
+                                                '',
+                                                '');
+
+                                    print(result);
+
+                                    // print('form pass ok');
+                                    // print(_name.text);
                                   } else {
                                     setState(() {
                                       _check_pass = true;

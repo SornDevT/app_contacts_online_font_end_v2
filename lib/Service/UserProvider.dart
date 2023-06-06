@@ -20,7 +20,6 @@ class UserProvider extends ChangeNotifier {
     String web,
     String job,
     String job_type,
-    String user_type,
   ) async {
     FormData DataRegister = FormData.fromMap({
       'name': name,
@@ -37,9 +36,18 @@ class UserProvider extends ChangeNotifier {
       'web': web,
       'job': job,
       'job_type': job_type,
-      'user_type': user_type,
     });
+    // print('sent data1');
+    final response = await dio().post('/register',
+        data: DataRegister,
+        options: Options(validateStatus: ((status) => true)));
+    // print('sent data2');
+    print(response);
 
-    return true;
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
   }
 }
