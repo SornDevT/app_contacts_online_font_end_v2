@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../Service/AuthProvider.dart';
 
 class ListContact extends StatefulWidget {
   const ListContact({super.key});
@@ -40,6 +42,9 @@ class _ListContactState extends State<ListContact> {
                           maxRadius: 28,
                         ),
                       ),
+                      // onSelected: (SampleItem item) {
+                      //   print('item');
+                      // },
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<SampleItem>>[
                             PopupMenuItem<SampleItem>(
@@ -77,20 +82,29 @@ class _ListContactState extends State<ListContact> {
                               ),
                             ),
                             PopupMenuItem<SampleItem>(
-                              child: Row(
-                                children: const [
-                                  Icon(
-                                    Icons.logout,
-                                    color: Color.fromARGB(255, 255, 56, 185),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text('ອອກຈາກລະບົບ',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 255, 56, 185)))
-                                ],
+                              child: InkWell(
+                                onTap: () {
+                                  // print('object');
+                                  Navigator.of(context).pop();
+                                  Provider.of<AuthProvider>(context,
+                                          listen: false)
+                                      .LogOut();
+                                },
+                                child: Row(
+                                  children: const [
+                                    Icon(
+                                      Icons.logout,
+                                      color: Color.fromARGB(255, 255, 56, 185),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('ອອກຈາກລະບົບ',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 255, 56, 185)))
+                                  ],
+                                ),
                               ),
                             ),
                           ])

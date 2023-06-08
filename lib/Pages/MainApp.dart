@@ -24,6 +24,7 @@ class _MainAppState extends State<MainApp> {
   void CheckLogin() async {
     final prefs = await SharedPreferences.getInstance();
     String? token = await prefs.getString('token');
+    print(token);
     Provider.of<AuthProvider>(context, listen: false)
         .CheckAuth(token: token.toString());
   }

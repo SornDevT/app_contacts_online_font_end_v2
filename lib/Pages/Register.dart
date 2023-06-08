@@ -1,3 +1,4 @@
+import 'package:app_contact_online_font_end/Pages/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Service/UserProvider.dart';
@@ -387,6 +388,19 @@ class _RegisterState extends State<Register> {
                                                 '');
 
                                     print(result);
+
+                                    if (result) {
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) => Login()));
+                                      //   Navigator.pushAndRemoveUntil(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //           builder: (context) => Login()),
+                                      //       (route) => false);
+                                      Navigator.of(context).pop();
+                                    }
 
                                     // print('form pass ok');
                                     // print(_name.text);
