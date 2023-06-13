@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../Service/UserProvider.dart';
 import 'ListContact.dart';
 import 'FormAdd.dart';
 
@@ -11,7 +12,7 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
-  int _selectedIndex = 0;
+  //int _selectedIndex = 0;
 
   static const List<Widget> _widgetOption = <Widget>[
     ListContact(),
@@ -20,27 +21,28 @@ class _AdminHomeState extends State<AdminHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOption.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        backgroundColor: Color.fromARGB(255, 255, 56, 185),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list), label: 'ລາຍການສະມາຊິກ'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.plus_one), label: 'ເພີ່ມສະມາຊິກ'),
-        ],
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey[400],
-        onTap: _onItemTapped,
-      ),
-    );
+    return Consumer<UserProvider>(builder: (context, user, child) {
+      return Scaffold(
+        body: _widgetOption.elementAt(user.AdminPage),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: user.AdminPage,
+          backgroundColor: Color.fromARGB(255, 255, 56, 185),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.list), label: 'ລາຍການສະມາຊິກ'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.plus_one), label: 'ເພີ່ມສະມາຊິກ'),
+          ],
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey[400],
+          onTap: _onItemTapped,
+        ),
+      );
+    });
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    // print(index);
+    Provider.of<UserProvider>(context, listen: false).SetAdminPage(index);
   }
 }

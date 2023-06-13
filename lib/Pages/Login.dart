@@ -12,6 +12,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _seepass = true;
+  bool _pressLogin = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _Tel = TextEditingController();
   TextEditingController _Password = TextEditingController();
@@ -169,29 +170,48 @@ class _LoginState extends State<Login> {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              bool result = await Provider.of<AuthProvider>(
-                                      context,
-                                      listen: false)
-                                  .LoginAuth(_Tel.text, _Password.text);
-                            }
-                          },
-                          child: Text('ເຂົ້າສູ່ລະບົບ',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(15),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(50),
+                        child: _pressLogin
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                      Color.fromARGB(255, 255, 56, 185)),
                                 ),
+                              )
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    // set loading
+                                    setState(() {
+                                      _pressLogin = true;
+                                    });
+
+                                    bool result =
+                                        await Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                            .LoginAuth(
+                                                _Tel.text, _Password.text);
+
+                                    if (!result) {
+                                      setState(() {
+                                        _pressLogin = false;
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Text('ເຂົ້າສູ່ລະບົບ',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.all(15),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(50),
+                                      ),
+                                    ),
+                                    primary: Color.fromARGB(255, 255, 56, 185)),
                               ),
-                              primary: Color.fromARGB(255, 255, 56, 185)),
-                        ),
                       ),
                       const SizedBox(
                         height: 80,
