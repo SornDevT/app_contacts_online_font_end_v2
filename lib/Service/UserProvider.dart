@@ -71,6 +71,68 @@ class UserProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> UpdataUser(
+    int UserID,
+    String name,
+    String last_name,
+    String gender,
+    String image,
+    String tel,
+    String password,
+    String birth_day,
+    String add_village,
+    String add_city,
+    String add_province,
+    String add_detail,
+    String email,
+    String web,
+    String job,
+    String job_type,
+  ) async {
+    FormData DataUpdate = FormData.fromMap({
+      'name': name,
+      'last_name': last_name,
+      'gender': gender,
+      'tel': tel,
+      'password': password,
+      'birth_day': birth_day,
+      'add_village': add_village,
+      'add_city': add_city,
+      'add_province': add_province,
+      'add_detail': add_detail,
+      'email': email,
+      'web': web,
+      'job': job,
+      'job_type': job_type,
+    });
+    // print('sent data1');
+    final prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    var Token1 = token!.replaceAll('\n', '');
+    var Token2 = Token1.replaceAll('\r', '');
+
+    final response = await dio().post('/user/update/${UserID}',
+        data: DataUpdate,
+        options: Options(headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Authorization": "Bearer $Token2",
+        }, validateStatus: ((status) => true)));
+    // print('sent data2');
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      GetAllUser();
+      notifyListeners();
+      return true;
+    }
+
+    if (response.statusCode == 401) {
+      return false;
+    }
+
+    return false;
+  }
+
   void GetAllUser() async {
     final prefs = await SharedPreferences.getInstance();
     String? token = await prefs.getString('token');

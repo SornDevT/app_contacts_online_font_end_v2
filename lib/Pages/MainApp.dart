@@ -41,7 +41,9 @@ class _MainAppState extends State<MainApp> {
               // ກວດຊອບ User ເປັນ Admin ຫລືບໍ່
               return AdminHome();
             } else {
-              return UserInfo();
+              return UserInfo(
+                UserID: 0,
+              );
             }
           } else {
             return Login();

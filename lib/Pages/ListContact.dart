@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Service/AuthProvider.dart';
 import '../Service/UserProvider.dart';
+import 'UserInfo.dart';
 
 class ListContact extends StatefulWidget {
   const ListContact({super.key});
@@ -203,7 +204,14 @@ class _ListContactState extends State<ListContact> {
         ],
       ),
       trailing: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserInfo(UserID: _user.id),
+            ),
+          );
+        },
         icon: Icon(
           Icons.info,
           size: 30,

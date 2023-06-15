@@ -6,7 +6,9 @@ import '../Service/UserProvider.dart';
 import '../Model/User.dart';
 
 class FormAdd extends StatefulWidget {
-  const FormAdd({super.key});
+  const FormAdd({Key? key, required this.UserID}) : super(key: key);
+
+  final int UserID;
 
   @override
   State<FormAdd> createState() => _FormAddState();
@@ -41,6 +43,38 @@ class _FormAddState extends State<FormAdd> {
   // ອັບໂຫຼດຮູບ
   String? imageFilePath;
   File? imageFile;
+
+  void GetUserData() {
+    List<User> listUser =
+        Provider.of<UserProvider>(context, listen: false).ListUser;
+    UserData = listUser.firstWhere((i) => i.id == widget.UserID);
+
+    if (widget.UserID != 0) {
+      setState(() {
+        _name.text = UserData!.name;
+        Gender = UserData!.gender;
+        _last_name.text = UserData!.last_name;
+        _birth_day.text = UserData!.birth_day;
+        _tel.text = UserData!.tel;
+        _email.text = UserData!.email;
+        _job.text = UserData!.job;
+        _job_type.text = UserData!.job_type;
+        _add_village.text = UserData!.add_village;
+        _add_city.text = UserData!.add_city;
+        _add_province.text = UserData!.add_province;
+        _add_detail.text = UserData!.add_detail;
+        _web.text = UserData!.web;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.UserID != 0) {
+      GetUserData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -371,8 +405,10 @@ class _FormAddState extends State<FormAdd> {
                         contentPadding: const EdgeInsets.all(20),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                        if (widget.UserID == 0) {
+                          if (value == null || value.isEmpty) {
+                            return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                          }
                         }
                       },
                     ),
@@ -418,8 +454,10 @@ class _FormAddState extends State<FormAdd> {
                         contentPadding: const EdgeInsets.all(20),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'ກະລຸນາປ້ອນຍືນຍັນລະຫັດຜ່ານ...';
+                        if (widget.UserID == 0) {
+                          if (value == null || value.isEmpty) {
+                            return 'ກະລຸນາປ້ອນຍືນຍັນລະຫັດຜ່ານ...';
+                          }
                         }
                       },
                     ),
@@ -708,57 +746,169 @@ class _FormAddState extends State<FormAdd> {
                     : ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            if (_password.text == _confirm_password.text) {
-                              setState(() {
-                                _check_pass = false;
-                                _pressAdd = true;
-                              });
-
-                              bool result = await Provider.of<UserProvider>(
-                                      context,
-                                      listen: false)
-                                  .RegisterUser(
-                                      _name.text,
-                                      _last_name.text,
-                                      Gender,
-                                      '',
-                                      _tel.text,
-                                      _password.text,
-                                      _birth_day.text,
-                                      _add_village.text,
-                                      _add_city.text,
-                                      _add_province.text,
-                                      _add_detail.text,
-                                      _email.text,
-                                      _web.text,
-                                      _job.text,
-                                      _job_type.text);
-
-                              print(result);
-
-                              if (result) {
+                            if (widget.UserID == 0) {
+                              /// ເພີ່ມໃໝ່
+                              ///
+                              if (_password.text == _confirm_password.text) {
                                 setState(() {
-                                  _pressAdd = false;
+                                  _check_pass = false;
+                                  _pressAdd = true;
                                 });
-                                Provider.of<UserProvider>(context,
-                                        listen: false)
-                                    .SetAdminPage(0);
-                              }
 
-                              // print('form pass ok');
-                              // print(_name.text);
+                                bool result = await Provider.of<UserProvider>(
+                                        context,
+                                        listen: false)
+                                    .RegisterUser(
+                                        _name.text,
+                                        _last_name.text,
+                                        Gender,
+                                        '',
+                                        _tel.text,
+                                        _password.text,
+                                        _birth_day.text,
+                                        _add_village.text,
+                                        _add_city.text,
+                                        _add_province.text,
+                                        _add_detail.text,
+                                        _email.text,
+                                        _web.text,
+                                        _job.text,
+                                        _job_type.text);
+
+                                print(result);
+
+                                if (result) {
+                                  setState(() {
+                                    _pressAdd = false;
+                                  });
+                                  Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .SetAdminPage(0);
+
+                                  // ສະແດງຂໍ້ຄວາມ
+                                  Snackbar('ບັນທຶກຂໍ້ມູນສຳເລັດ!');
+                                }
+
+                                // print('form pass ok');
+                                // print(_name.text);
+                              } else {
+                                setState(() {
+                                  _check_pass = true;
+                                });
+                              }
                             } else {
-                              setState(() {
-                                _check_pass = true;
-                              });
+                              /// ອັບເດດ
+
+                              if (_password == '') {
+                                // ອັບເດດຂໍ້ມູນ ທີ່ບໍ່ມິລະຫັດຜ້ານ
+                                setState(() {
+                                  _pressAdd = true;
+                                });
+
+                                bool result = await Provider.of<UserProvider>(
+                                        context,
+                                        listen: false)
+                                    .UpdataUser(
+                                        widget.UserID,
+                                        _name.text,
+                                        _last_name.text,
+                                        Gender,
+                                        '',
+                                        _tel.text,
+                                        _password.text,
+                                        _birth_day.text,
+                                        _add_village.text,
+                                        _add_city.text,
+                                        _add_province.text,
+                                        _add_detail.text,
+                                        _email.text,
+                                        _web.text,
+                                        _job.text,
+                                        _job_type.text);
+
+                                // ກວດເຊັດຂໍ້ມູນ
+                                if (result) {
+                                  setState(() {
+                                    _pressAdd = false;
+                                  });
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                  // ສະແດງຂໍ້ຄວາມ
+                                  Snackbar('ອັບເດດ ຂໍ້ມູນສຳເລັດ!');
+                                } else {
+                                  setState(() {
+                                    _pressAdd = false;
+                                  });
+                                  // ສະແດງຂໍ້ຄວາມ
+                                  Snackbar('ຜິດຜາດ! ອັບເດດຂໍ້ມູນບໍ່ ສຳເລັດ!');
+                                }
+                              } else {
+                                // ອັບເດດຂໍ້ມູນພ້ອມລະຫັດ
+                                if (_password.text == _confirm_password.text) {
+                                  // ກວດລະຫັດຜ່ານ ຕົງກັນຫຼືບໍ່
+
+                                  setState(() {
+                                    _check_pass = false;
+                                    _pressAdd = true;
+                                  });
+
+                                  bool result = await Provider.of<UserProvider>(
+                                          context,
+                                          listen: false)
+                                      .UpdataUser(
+                                          widget.UserID,
+                                          _name.text,
+                                          _last_name.text,
+                                          Gender,
+                                          '',
+                                          _tel.text,
+                                          _password.text,
+                                          _birth_day.text,
+                                          _add_village.text,
+                                          _add_city.text,
+                                          _add_province.text,
+                                          _add_detail.text,
+                                          _email.text,
+                                          _web.text,
+                                          _job.text,
+                                          _job_type.text);
+
+                                  // ກວດເຊັດຂໍ້ມູນ
+                                  if (result) {
+                                    setState(() {
+                                      _pressAdd = false;
+                                    });
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
+                                    // ສະແດງຂໍ້ຄວາມ
+                                    Snackbar('ອັບເດດ ຂໍ້ມູນສຳເລັດ!');
+                                  } else {
+                                    setState(() {
+                                      _pressAdd = false;
+                                    });
+                                    // ສະແດງຂໍ້ຄວາມ
+                                    Snackbar('ຜິດຜາດ! ອັບເດດຂໍ້ມູນບໍ່ ສຳເລັດ!');
+                                  }
+                                } else {
+                                  setState(() {
+                                    _check_pass = true;
+                                  });
+                                }
+                              }
                             }
                           }
                         },
-                        child: Text('ບັນທຶກຂໍ້ມູນ',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            )),
+                        child: widget.UserID == 0
+                            ? Text('ບັນທຶກຂໍ້ມູນ',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ))
+                            : Text('ອັບເດດຂໍ້ມູນ',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                )),
                         style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.all(15),
                             shape: const RoundedRectangleBorder(
@@ -774,5 +924,12 @@ class _FormAddState extends State<FormAdd> {
         ),
       ),
     );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> Snackbar(
+      String _mg) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(_mg),
+    ));
   }
 }
