@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'Dio.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Model/User.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool isLoggin = false; // ກວດຊອບການເຂົ້້າສູ່ລະບົບ
@@ -9,6 +12,7 @@ class AuthProvider extends ChangeNotifier {
   bool CheckLogin = false; // ໂຕແປເອົາໄວ້ສະແດງໜ້າກວດຊອງການ Login
   bool isAdmin = false; // ເຊັກວ່າແມ່ນ Admin ຫຼືບໍ່
   String? message_login;
+  User? user_login;
   bool Show_ms_login = false;
 
   void CheckAuth({required String token}) async {
@@ -18,18 +22,26 @@ class AuthProvider extends ChangeNotifier {
     var Token1 = token.replaceAll('\n', '');
     var Token2 = Token1.replaceAll('\r', '');
 
-    final response = await dio().get('/user',
+    final response = await dio().get('/check_user',
         options: Options(headers: {
           "Content-Type": "application/json; charset=utf-8",
           "Authorization": "Bearer $Token2",
         }, validateStatus: ((status) => true)));
 
+    print(response.statusCode);
+
     if (response.statusCode == 200) {
-      isLoggin = true;
-      CheckLogin = true;
+      // print(response.data['user']);
+
+      Map<String, dynamic> decode_user = response.data['user'];
+      user_login = await User.fromJson(decode_user);
+      notifyListeners();
+      // print(response.data['user']);
 
       isAdmin = (await prefs.getBool('isAdmin'))!;
-
+      // print(isAdmin);
+      isLoggin = true;
+      CheckLogin = true;
       notifyListeners();
     } else {
       isLoggin = false;
@@ -66,7 +78,7 @@ class AuthProvider extends ChangeNotifier {
 
       // save user type
       final prefs = await SharedPreferences.getInstance();
-
+      // print(response.data['user']);
       if (response.data['user']['user_type'] == 'admin') {
         isAdmin = true;
         await prefs.setBool('isAdmin', isAdmin);
@@ -74,7 +86,9 @@ class AuthProvider extends ChangeNotifier {
         isAdmin = false;
         await prefs.setBool('isAdmin', isAdmin);
       }
-      print('login pass');
+      print(response.data['user']);
+      Map<String, dynamic> decode_user = response.data['user'];
+      user_login = User.fromJson(decode_user);
       _token = token;
       isLoggin = true;
       notifyListeners();

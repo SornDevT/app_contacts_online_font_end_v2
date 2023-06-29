@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'Dio.dart';
 import 'package:dio/dio.dart';
@@ -12,7 +14,9 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // list user
   List<User> ListUser = [];
+  List<User> ListUserSearch = [];
 
   void AddListUser(User _user) {
     ListUser.add(_user);
@@ -28,7 +32,7 @@ class UserProvider extends ChangeNotifier {
     String name,
     String last_name,
     String gender,
-    String image,
+    File? image,
     String tel,
     String password,
     String birth_day,
@@ -41,31 +45,67 @@ class UserProvider extends ChangeNotifier {
     String job,
     String job_type,
   ) async {
-    FormData DataRegister = FormData.fromMap({
-      'name': name,
-      'last_name': last_name,
-      'gender': gender,
-      'tel': tel,
-      'password': password,
-      'birth_day': birth_day,
-      'add_village': add_village,
-      'add_city': add_city,
-      'add_province': add_province,
-      'add_detail': add_detail,
-      'email': email,
-      'web': web,
-      'job': job,
-      'job_type': job_type,
-    });
-    // print('sent data1');
-    final response = await dio().post('/register',
-        data: DataRegister,
-        options: Options(validateStatus: ((status) => true)));
-    // print('sent data2');
-    print(response);
+    if (image != null) {
+      String filename = image.path.split('/').last;
+      FormData DataRegister = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'image': await MultipartFile.fromFile(
+          image.path,
+          filename: filename,
+        ),
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
+      print(image.path);
+      final response = await dio().post('/register',
+          data: DataRegister,
+          options: Options(headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          }, validateStatus: ((status) => true)));
+      // print('sent data2');
+      print(response);
 
-    if (response.statusCode == 200) {
-      return true;
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } else {
+      FormData DataRegister = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
+      // print('sent data1');
+      final response = await dio().post('/register',
+          data: DataRegister,
+          options: Options(validateStatus: ((status) => true)));
+      // print('sent data2');
+      print(response);
+
+      if (response.statusCode == 200) {
+        return true;
+      }
     }
 
     return false;
@@ -76,7 +116,7 @@ class UserProvider extends ChangeNotifier {
     String name,
     String last_name,
     String gender,
-    String image,
+    File? image,
     String tel,
     String password,
     String birth_day,
@@ -89,45 +129,94 @@ class UserProvider extends ChangeNotifier {
     String job,
     String job_type,
   ) async {
-    FormData DataUpdate = FormData.fromMap({
-      'name': name,
-      'last_name': last_name,
-      'gender': gender,
-      'tel': tel,
-      'password': password,
-      'birth_day': birth_day,
-      'add_village': add_village,
-      'add_city': add_city,
-      'add_province': add_province,
-      'add_detail': add_detail,
-      'email': email,
-      'web': web,
-      'job': job,
-      'job_type': job_type,
-    });
-    // print('sent data1');
-    final prefs = await SharedPreferences.getInstance();
-    String? token = await prefs.getString('token');
-    var Token1 = token!.replaceAll('\n', '');
-    var Token2 = Token1.replaceAll('\r', '');
+    if (image != null) {
+      String filename = image.path.split('/').last;
 
-    final response = await dio().post('/user/update/${UserID}',
-        data: DataUpdate,
-        options: Options(headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Authorization": "Bearer $Token2",
-        }, validateStatus: ((status) => true)));
-    // print('sent data2');
-    print(response.statusCode);
+      FormData DataUpdate = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'image': await MultipartFile.fromFile(
+          image.path,
+          filename: filename,
+        ),
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
+      // print(image.path);
+      final prefs = await SharedPreferences.getInstance();
+      String? token = await prefs.getString('token');
+      var Token1 = token!.replaceAll('\n', '');
+      var Token2 = Token1.replaceAll('\r', '');
 
-    if (response.statusCode == 200) {
-      GetAllUser();
-      notifyListeners();
-      return true;
-    }
+      final response = await dio().post('/user/update/${UserID}',
+          data: DataUpdate,
+          options: Options(headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer $Token2",
+          }, validateStatus: ((status) => true)));
+      // print('sent data2');
+      print(response.statusCode);
 
-    if (response.statusCode == 401) {
-      return false;
+      if (response.statusCode == 200) {
+        GetAllUser();
+        notifyListeners();
+        return true;
+      }
+
+      if (response.statusCode == 401) {
+        return false;
+      }
+    } else {
+      FormData DataUpdate = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
+      // print('sent data1');
+      final prefs = await SharedPreferences.getInstance();
+      String? token = await prefs.getString('token');
+      var Token1 = token!.replaceAll('\n', '');
+      var Token2 = Token1.replaceAll('\r', '');
+
+      final response = await dio().post('/user/update/${UserID}',
+          data: DataUpdate,
+          options: Options(headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer $Token2",
+          }, validateStatus: ((status) => true)));
+      // print('sent data2');
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        GetAllUser();
+        notifyListeners();
+        return true;
+      }
+
+      if (response.statusCode == 401) {
+        return false;
+      }
     }
 
     return false;
@@ -173,7 +262,45 @@ class UserProvider extends ChangeNotifier {
         );
         AddListUser(_listUser);
       }
+      ListUserSearch = ListUser;
       notifyListeners();
     }
+  }
+
+  void SearchUser(String value) {
+    print(value);
+    // List<User> Search = [];
+    if (value.isNotEmpty) {
+      final result = ListUser.where((item) {
+        final name = item.name.toLowerCase();
+        final input = value.toLowerCase();
+        return name.contains(input);
+      }).toList();
+      ListUserSearch = result;
+      notifyListeners();
+    } else {
+      ListUserSearch = ListUser;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> DeleteUser(int UserID) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    var Token1 = token!.replaceAll('\n', '');
+    var Token2 = Token1.replaceAll('\r', '');
+
+    final response = await dio().delete('/user/${UserID}',
+        options: Options(headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Authorization": "Bearer $Token2",
+        }, validateStatus: ((status) => true)));
+
+    if (response.statusCode == 200) {
+      GetAllUser();
+      return true;
+    }
+
+    return false;
   }
 }

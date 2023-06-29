@@ -1,3 +1,4 @@
+import 'package:app_contact_online_font_end/Service/UserProvider.dart';
 import 'package:flutter/material.dart';
 import 'AdminHome.dart';
 import 'Checking.dart';
@@ -25,6 +26,7 @@ class _MainAppState extends State<MainApp> {
     final prefs = await SharedPreferences.getInstance();
     String? token = await prefs.getString('token');
     print(token);
+    // Provider.of<UserProvider>(context, listen: false).GetAllUser();
     Provider.of<AuthProvider>(context, listen: false)
         .CheckAuth(token: token.toString());
   }
@@ -41,6 +43,7 @@ class _MainAppState extends State<MainApp> {
               // ກວດຊອບ User ເປັນ Admin ຫລືບໍ່
               return AdminHome();
             } else {
+              // print(auth.user_login!.id);
               return UserInfo(
                 UserID: 0,
               );

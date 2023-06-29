@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_contact_online_font_end/Pages/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,8 @@ class _RegisterState extends State<Register> {
   bool _seepass2 = true;
   bool _check_pass = false;
   String Gender = 'male';
+
+  File? imageFile;
 
   TextEditingController _name = TextEditingController();
   TextEditingController _last_name = TextEditingController();
@@ -374,7 +378,7 @@ class _RegisterState extends State<Register> {
                                                 _name.text,
                                                 _last_name.text,
                                                 Gender,
-                                                '',
+                                                imageFile,
                                                 _tel.text,
                                                 _password.text,
                                                 '',

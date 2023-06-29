@@ -1,7 +1,9 @@
+import 'package:app_contact_online_font_end/Service/ServiceSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Service/AuthProvider.dart';
 import '../Service/UserProvider.dart';
+import 'FormAdd.dart';
 import 'UserInfo.dart';
 
 class ListContact extends StatefulWidget {
@@ -47,54 +49,111 @@ class _ListContactState extends State<ListContact> {
                       ),
                       PopupMenuButton<SampleItem>(
                           offset: const Offset(0, 70),
-                          child: CircleAvatar(
-                            maxRadius: 32,
-                            backgroundColor: Color.fromARGB(255, 252, 144, 82),
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://cdn-icons-png.flaticon.com/512/219/219969.png"),
-                              maxRadius: 28,
-                            ),
-                          ),
+                          child:
+                              (Provider.of<AuthProvider>(context, listen: false)
+                                          .user_login!
+                                          .image ==
+                                      '')
+                                  ? CircleAvatar(
+                                      maxRadius: 32,
+                                      backgroundColor:
+                                          Color.fromARGB(255, 252, 144, 82),
+                                      child: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            "https://cdn-icons-png.flaticon.com/512/219/219969.png"),
+                                        maxRadius: 28,
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      maxRadius: 32,
+                                      backgroundColor:
+                                          Color.fromARGB(255, 252, 144, 82),
+                                      child: CircleAvatar(
+                                        backgroundImage: NetworkImage(BaseURL +
+                                            'img/' +
+                                            Provider.of<AuthProvider>(context,
+                                                    listen: false)
+                                                .user_login!
+                                                .image),
+                                        maxRadius: 28,
+                                      ),
+                                    ),
                           // onSelected: (SampleItem item) {
                           //   print('item');
                           // },
                           itemBuilder: (BuildContext context) =>
                               <PopupMenuEntry<SampleItem>>[
                                 PopupMenuItem<SampleItem>(
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.info,
-                                        color:
-                                            Color.fromARGB(255, 255, 56, 185),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('ເບີ່ງຂໍ້ມູນ',
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 255, 56, 185)))
-                                    ],
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserInfo(
+                                              UserID: Provider.of<AuthProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .user_login!
+                                                  .id),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info,
+                                          color:
+                                              Color.fromARGB(255, 255, 56, 185),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        // Text(Provider.of<AuthProvider>(context,
+                                        //         listen: false)
+                                        //     .user_login!
+                                        //     .name
+                                        //     .toString()),
+                                        Text('ເບີ່ງຂໍ້ມູນ',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 56, 185)))
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 PopupMenuItem<SampleItem>(
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.edit,
-                                        color:
-                                            Color.fromARGB(255, 255, 56, 185),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('ແກ້ໄຂຂໍ້ມູນ',
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 255, 56, 185)))
-                                    ],
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => FormAdd(
+                                              UserID: Provider.of<AuthProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .user_login!
+                                                  .id),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.edit,
+                                          color:
+                                              Color.fromARGB(255, 255, 56, 185),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text('ແກ້ໄຂຂໍ້ມູນ',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 56, 185)))
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 PopupMenuItem<SampleItem>(
@@ -131,6 +190,10 @@ class _ListContactState extends State<ListContact> {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: TextFormField(
+                    onChanged: (value) {
+                      Provider.of<UserProvider>(context, listen: false)
+                          .SearchUser(value);
+                    },
                     style: TextStyle(fontSize: 20),
                     decoration: InputDecoration(
                       filled: true,
@@ -154,9 +217,9 @@ class _ListContactState extends State<ListContact> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: user.ListUser.length,
+                    itemCount: user.ListUserSearch.length,
                     itemBuilder: ((context, index) {
-                      return ListContact(user.ListUser[index]);
+                      return ListContact(user.ListUserSearch[index]);
                     }),
                   ),
                   // ListView(
@@ -186,11 +249,21 @@ class _ListContactState extends State<ListContact> {
   }
 
   Widget ListContact(_user) {
+    // print(_user.image);
     return ListTile(
       contentPadding: const EdgeInsets.all(5),
-      leading: CircleAvatar(
-        maxRadius: 30,
-      ),
+      leading: _user.image == ''
+          ? CircleAvatar(
+              child: Icon(
+                Icons.account_circle,
+                size: 50,
+              ),
+              maxRadius: 30,
+            )
+          : CircleAvatar(
+              backgroundImage: NetworkImage(BaseURL + 'img/' + _user.image),
+              maxRadius: 30,
+            ),
       title: Text(_user.name + ' ' + _user.last_name),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
