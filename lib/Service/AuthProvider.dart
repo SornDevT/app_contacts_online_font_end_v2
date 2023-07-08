@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier {
 
       Map<String, dynamic> decode_user = response.data['user'];
       user_login = await User.fromJson(decode_user);
-      notifyListeners();
+      // notifyListeners();
       // print(response.data['user']);
 
       isAdmin = (await prefs.getBool('isAdmin'))!;

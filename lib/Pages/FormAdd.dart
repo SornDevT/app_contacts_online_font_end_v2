@@ -86,7 +86,7 @@ class _FormAddState extends State<FormAdd> {
       }
     } else {
       UserData = Provider.of<AuthProvider>(context, listen: false).user_login;
-      // print(UserData);
+
       setState(() {
         _name.text = UserData!.name;
         Gender = UserData!.gender;
@@ -111,6 +111,11 @@ class _FormAddState extends State<FormAdd> {
     if (widget.UserID != 00) {
       GetUserData();
     }
+    if (widget.UserID == 0) {
+      GetUserData();
+    }
+
+    print(widget.UserID);
   }
 
   @override
@@ -143,20 +148,32 @@ class _FormAddState extends State<FormAdd> {
                   },
                   child: (imageFilePath == null)
                       ? (widget.UserID == 00)
-                          ? const CircleAvatar(
-                              backgroundColor:
-                                  Color.fromARGB(255, 255, 56, 185),
-                              maxRadius: 90,
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                maxRadius: 88,
-                                child: Icon(
-                                  Icons.add,
-                                  size: 50,
-                                  color: Color.fromARGB(255, 255, 56, 185),
-                                ),
-                              ),
-                            )
+                          ? (UserData!.image == '')
+                              ? const CircleAvatar(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 255, 56, 185),
+                                  maxRadius: 90,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    maxRadius: 88,
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 50,
+                                      color: Color.fromARGB(255, 255, 56, 185),
+                                    ),
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 255, 56, 185),
+                                  maxRadius: 90,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    maxRadius: 88,
+                                    backgroundImage: NetworkImage(
+                                        BaseURL + 'img/' + UserData!.image),
+                                  ),
+                                )
                           : (UserData!.image == '')
                               ? const CircleAvatar(
                                   backgroundColor:
@@ -827,7 +844,7 @@ class _FormAddState extends State<FormAdd> {
                     : ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            if (widget.UserID == 00) {
+                            if (widget.UserID == '00') {
                               /// ເພີ່ມໃໝ່
                               ///
                               if (_password.text == _confirm_password.text) {
@@ -890,7 +907,7 @@ class _FormAddState extends State<FormAdd> {
                                         context,
                                         listen: false)
                                     .UpdataUser(
-                                        widget.UserID,
+                                        UserData!.id,
                                         _name.text,
                                         _last_name.text,
                                         Gender,
@@ -937,7 +954,7 @@ class _FormAddState extends State<FormAdd> {
                                           context,
                                           listen: false)
                                       .UpdataUser(
-                                          widget.UserID,
+                                          UserData!.id,
                                           _name.text,
                                           _last_name.text,
                                           Gender,
@@ -979,7 +996,7 @@ class _FormAddState extends State<FormAdd> {
                             }
                           }
                         },
-                        child: widget.UserID == 00
+                        child: widget.UserID == '00'
                             ? Text('ບັນທຶກຂໍ້ມູນ',
                                 style: TextStyle(
                                   fontSize: 20,
