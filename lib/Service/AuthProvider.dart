@@ -31,10 +31,11 @@ class AuthProvider extends ChangeNotifier {
     print(response.statusCode);
 
     if (response.statusCode == 200) {
-      // print(response.data['user']);
+      print(response.data);
 
       Map<String, dynamic> decode_user = response.data['user'];
       user_login = await User.fromJson(decode_user);
+
       // notifyListeners();
       // print(response.data['user']);
 

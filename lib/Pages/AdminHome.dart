@@ -16,7 +16,10 @@ class _AdminHomeState extends State<AdminHome> {
 
   static const List<Widget> _widgetOption = <Widget>[
     ListContact(),
-    FormAdd(UserID: 00),
+    FormAdd(
+      UserID: 0,
+      FormType: 'add',
+    ),
   ];
 
   @override

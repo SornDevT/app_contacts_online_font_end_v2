@@ -109,7 +109,10 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FormAdd(UserID: widget.UserID),
+                        builder: (context) => FormAdd(
+                          UserID: widget.UserID,
+                          FormType: 'edit',
+                        ),
                       ),
                     );
                   }

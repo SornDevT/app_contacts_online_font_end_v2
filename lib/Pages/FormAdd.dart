@@ -9,9 +9,11 @@ import '../Model/User.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FormAdd extends StatefulWidget {
-  const FormAdd({Key? key, required this.UserID}) : super(key: key);
+  const FormAdd({Key? key, required this.UserID, required this.FormType})
+      : super(key: key);
 
   final int UserID;
+  final String FormType;
 
   @override
   State<FormAdd> createState() => _FormAddState();
@@ -25,6 +27,7 @@ class _FormAddState extends State<FormAdd> {
   bool _pressAdd = false;
   bool _seepass = true;
   bool _seepass2 = true;
+  int? UserIDUpdate;
 
   String Gender = 'male';
 
@@ -86,7 +89,6 @@ class _FormAddState extends State<FormAdd> {
       }
     } else {
       UserData = Provider.of<AuthProvider>(context, listen: false).user_login;
-
       setState(() {
         _name.text = UserData!.name;
         Gender = UserData!.gender;
@@ -108,14 +110,18 @@ class _FormAddState extends State<FormAdd> {
   @override
   void initState() {
     super.initState();
-    if (widget.UserID != 00) {
-      GetUserData();
-    }
-    if (widget.UserID == 0) {
+    // if (widget.UserID != 00) {
+    //   GetUserData();
+    // }
+    // if (widget.UserID != 0) {
+    // GetUserData();
+    //}
+    if (widget.FormType == 'edit') {
       GetUserData();
     }
 
     print(widget.UserID);
+    print(widget.FormType);
   }
 
   @override
@@ -147,33 +153,21 @@ class _FormAddState extends State<FormAdd> {
                     getImage();
                   },
                   child: (imageFilePath == null)
-                      ? (widget.UserID == 00)
-                          ? (UserData!.image == '')
-                              ? const CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 255, 56, 185),
-                                  maxRadius: 90,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    maxRadius: 88,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 50,
-                                      color: Color.fromARGB(255, 255, 56, 185),
-                                    ),
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 255, 56, 185),
-                                  maxRadius: 90,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    maxRadius: 88,
-                                    backgroundImage: NetworkImage(
-                                        BaseURL + 'img/' + UserData!.image),
-                                  ),
-                                )
+                      ? (widget.FormType == 'add')
+                          ? const CircleAvatar(
+                              backgroundColor:
+                                  Color.fromARGB(255, 255, 56, 185),
+                              maxRadius: 90,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                maxRadius: 88,
+                                child: Icon(
+                                  Icons.add,
+                                  size: 50,
+                                  color: Color.fromARGB(255, 255, 56, 185),
+                                ),
+                              ),
+                            )
                           : (UserData!.image == '')
                               ? const CircleAvatar(
                                   backgroundColor:
@@ -503,7 +497,7 @@ class _FormAddState extends State<FormAdd> {
                         contentPadding: const EdgeInsets.all(20),
                       ),
                       validator: (value) {
-                        if (widget.UserID == 00) {
+                        if (widget.FormType == 'add') {
                           if (value == null || value.isEmpty) {
                             return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
                           }
@@ -552,7 +546,7 @@ class _FormAddState extends State<FormAdd> {
                         contentPadding: const EdgeInsets.all(20),
                       ),
                       validator: (value) {
-                        if (widget.UserID == 00) {
+                        if (widget.FormType == 'add') {
                           if (value == null || value.isEmpty) {
                             return 'ກະລຸນາປ້ອນຍືນຍັນລະຫັດຜ່ານ...';
                           }
@@ -844,7 +838,7 @@ class _FormAddState extends State<FormAdd> {
                     : ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            if (widget.UserID == '00') {
+                            if (widget.FormType == 'add') {
                               /// ເພີ່ມໃໝ່
                               ///
                               if (_password.text == _confirm_password.text) {
@@ -903,11 +897,22 @@ class _FormAddState extends State<FormAdd> {
                                   _pressAdd = true;
                                 });
 
+                                if (widget.UserID == 0 &&
+                                    widget.FormType == 'edit') {
+                                  setState(() {
+                                    UserIDUpdate = UserData!.id;
+                                  });
+                                } else {
+                                  setState(() {
+                                    UserIDUpdate = widget.UserID;
+                                  });
+                                }
+
                                 bool result = await Provider.of<UserProvider>(
                                         context,
                                         listen: false)
                                     .UpdataUser(
-                                        UserData!.id,
+                                        UserIDUpdate!,
                                         _name.text,
                                         _last_name.text,
                                         Gender,
@@ -950,11 +955,22 @@ class _FormAddState extends State<FormAdd> {
                                     _pressAdd = true;
                                   });
 
+                                  if (widget.UserID == 0 &&
+                                      widget.FormType == 'edit') {
+                                    setState(() {
+                                      UserIDUpdate = UserData!.id;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      UserIDUpdate = widget.UserID;
+                                    });
+                                  }
+
                                   bool result = await Provider.of<UserProvider>(
                                           context,
                                           listen: false)
                                       .UpdataUser(
-                                          UserData!.id,
+                                          UserIDUpdate!,
                                           _name.text,
                                           _last_name.text,
                                           Gender,
@@ -996,7 +1012,7 @@ class _FormAddState extends State<FormAdd> {
                             }
                           }
                         },
-                        child: widget.UserID == '00'
+                        child: widget.FormType == 'add'
                             ? Text('ບັນທຶກຂໍ້ມູນ',
                                 style: TextStyle(
                                   fontSize: 20,

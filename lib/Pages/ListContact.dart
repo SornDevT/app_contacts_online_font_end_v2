@@ -130,11 +130,13 @@ class _ListContactState extends State<ListContact> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => FormAdd(
-                                              UserID: Provider.of<AuthProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .user_login!
-                                                  .id),
+                                            UserID: Provider.of<AuthProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .user_login!
+                                                .id,
+                                            FormType: 'edit',
+                                          ),
                                         ),
                                       );
                                     },
